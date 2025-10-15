@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
@@ -30,11 +31,16 @@ public class FirstScreen implements Screen {
     private Vector2 playerPosition;
     private float playerSpeed = 100f; // 100 pixels per second
 
+    private TiledMapTileLayer collisionLayer;
+
+
     @Override
     public void show() {
         // Prepare your screen here.
         map= new TmxMapLoader().load("test2.tmx");
-        mapRenderer=new OrthogonalTiledMapRenderer(map,2f);
+        mapRenderer=new OrthogonalTiledMapRenderer(map);
+
+        collisionLayer = (TiledMapTileLayer) map.getLayers().get("Collision");
 
         playerTexture=new Texture("player.png");
         batch= new SpriteBatch();
@@ -46,25 +52,46 @@ public class FirstScreen implements Screen {
     }
 
      private void handleInput(float delta) {
+        float oldX = playerPosition.x;
+        float oldY = playerPosition.y;
+
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
             playerPosition.x -= playerSpeed * delta;
         }
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
             playerPosition.x += playerSpeed * delta;
         }
+        if (isCellBlocked(playerPosition.x, playerPosition.y) || isCellBlocked(playerPosition.x, playerPosition.y + playerFrame.getRegionHeight() - 1)) {
+            playerPosition.x = oldX;
+        }
+
         if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
             playerPosition.y += playerSpeed * delta;
         }
         if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
             playerPosition.y -= playerSpeed * delta;
         }
+        if (isCellBlocked(playerPosition.x, playerPosition.y) || isCellBlocked(playerPosition.x + playerFrame.getRegionWidth() - 1, playerPosition.y)) {
+            playerPosition.y = oldY;
+        }
     }
+
+     private boolean isCellBlocked(float x, float y) {
+        TiledMapTileLayer.Cell cell = collisionLayer.getCell(
+            (int) (x / collisionLayer.getTileWidth()), 
+            (int) (y / collisionLayer.getTileHeight())
+        );
+        return cell != null && cell.getTile() != null;
+    }
+
 
     @Override
     public void render(float delta) {
         // Draw your screen here. "delta" is the time since last render in seconds.
         ScreenUtils.clear(0,0,0,1);
         handleInput(delta);
+
+        collisionLayer.setVisible(false);
 
         //camera updation
         camera.position.set(playerPosition.x,playerPosition.y,0);
