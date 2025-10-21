@@ -71,29 +71,31 @@ public class StartMenuScreen implements Screen {
 
         stage.addActor(table);
     }
-
-    private void handleButton(String action) {
-        switch (action) {
-            case "PLAY":
-                System.out.println("Starting new game...");
-                // game.setScreen(new GameScreen(game));
-                break;
-            case "CONTINUE":
-                System.out.println("Loading saved game...");
-                break;
-            case "OPTIONS":
-                System.out.println("Opening options...");
-                break;
-            case "CREDITS":
-                System.out.println("Showing credits...");
-                break;
-            case "EXIT":
-                Gdx.app.exit();
-                break;
-        }
-    }
-
-    @Override
+   private void handleButton(String action) {
+       switch (action) {
+           case "PLAY":
+               System.out.println("Starting new game...");
+               game.setScreen(new GameScreen(game)); // Assuming you have a GameScreen class
+               break;
+           case "CONTINUE":
+               System.out.println("Loading saved game...");
+               // Implement loading logic here
+               break;
+           case "OPTIONS":
+               System.out.println("Opening options...");
+               // Implement options screen logic here
+               break;
+           case "CREDITS":
+               System.out.println("Showing credits...");
+               // Implement credits screen logic here
+               break;
+           case "EXIT":
+               Gdx.app.exit();
+               break;
+       }
+   }
+   
+@Override
     public void render(float delta) {
         Gdx.gl.glClearColor(0.53f, 0.81f, 0.92f, 1); // sky blue
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
