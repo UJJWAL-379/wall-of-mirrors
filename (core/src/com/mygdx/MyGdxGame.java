@@ -1,5 +1,5 @@
-@Override
-public void create() {
-    batch = new SpriteBatch();
-    setScreen(new StartMenuScreen(this));
-}
+   @Override
+   public void create() {
+       setScreen(new StartMenuScreen(this));  // Set the StartMenuScreen as the initial screen
+   }
+   
